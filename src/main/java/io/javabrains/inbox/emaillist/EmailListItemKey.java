@@ -1,5 +1,6 @@
 package io.javabrains.inbox.emaillist;
 
+import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyClass;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
@@ -26,7 +27,8 @@ public class EmailListItemKey {
     @PrimaryKeyColumn(
             name = "created_time_uuid",
             ordinal = 2,
-            type = PrimaryKeyType.CLUSTERED
+            type = PrimaryKeyType.CLUSTERED,
+            ordering = Ordering.DESCENDING
     )
     private UUID timeUUID;
 
