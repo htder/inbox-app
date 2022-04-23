@@ -3,6 +3,7 @@ package io.javabrains.inbox;
 import com.datastax.oss.driver.api.core.uuid.Uuids;
 import io.javabrains.inbox.email.Email;
 import io.javabrains.inbox.email.EmailRepository;
+import io.javabrains.inbox.email.EmailService;
 import io.javabrains.inbox.emaillist.EmailListItem;
 import io.javabrains.inbox.emaillist.EmailListItemKey;
 import io.javabrains.inbox.emaillist.EmailListItemRepository;
@@ -28,13 +29,7 @@ public class InboxApp {
 	FolderRepository folderRepository;
 
 	@Autowired
-	EmailListItemRepository emailListItemRepository;
-
-	@Autowired
-	EmailRepository emailRepository;
-
-	@Autowired
-	UnreadEmailStatsRepository unreadEmailStatsRepository;
+	EmailService emailService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(InboxApp.class, args);
@@ -48,36 +43,12 @@ public class InboxApp {
 
 	@PostConstruct
 	public void init() {
-		folderRepository.save(new Folder("htder", "Inbox", "blue"));
-		folderRepository.save(new Folder("htder", "Sent", "green"));
-		folderRepository.save(new Folder("htder", "Important", "yellow"));
-
-		unreadEmailStatsRepository.decrementUnreadCount("htder", "Inbox");
-		unreadEmailStatsRepository.decrementUnreadCount("htder", "Inbox");
-		unreadEmailStatsRepository.decrementUnreadCount("htder", "Inbox");
+		folderRepository.save(new Folder("htder", "Work", "blue"));
+		folderRepository.save(new Folder("htder", "Home", "green"));
+		folderRepository.save(new Folder("htder", "Family", "yellow"));
 
 		for (int i = 0; i < 10; i++) {
-			EmailListItemKey key = new EmailListItemKey();
-			key.setId("htder");
-			key.setLabel("Inbox");
-			key.setTimeUUID(Uuids.timeBased());
-
-			EmailListItem item = new EmailListItem();
-			item.setKey(key);
-			item.setTo(List.of("htder", "abc", "def"));
-			item.setSubject("Subject " + i);
-			item.setUnread(true);
-
-			emailListItemRepository.save(item);
-
-			Email email = new Email();
-			email.setId(key.getTimeUUID());
-			email.setFrom("htder");
-			email.setSubject(item.getSubject());
-			email.setBody("Body " + i);
-			email.setTo(item.getTo());
-
-			emailRepository.save(email);
+			emailService.sendEmail("htder", List.of("htder"), "Hello World " + i, "body " + i);
 		}
 	}
 

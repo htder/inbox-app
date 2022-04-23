@@ -9,7 +9,7 @@ import org.springframework.data.cassandra.core.mapping.Table;
 public class UnreadEmailStats {
 
     @PrimaryKeyColumn(
-            name = "user_id2",
+            name = "user_id",
             ordinal = 0,
             type = PrimaryKeyType.PARTITIONED
     )
