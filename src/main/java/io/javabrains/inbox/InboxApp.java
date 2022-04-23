@@ -8,6 +8,7 @@ import io.javabrains.inbox.emaillist.EmailListItemKey;
 import io.javabrains.inbox.emaillist.EmailListItemRepository;
 import io.javabrains.inbox.folders.Folder;
 import io.javabrains.inbox.folders.FolderRepository;
+import io.javabrains.inbox.folders.UnreadEmailStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,6 +33,9 @@ public class InboxApp {
 	@Autowired
 	EmailRepository emailRepository;
 
+	@Autowired
+	UnreadEmailStatsRepository unreadEmailStatsRepository;
+
 	public static void main(String[] args) {
 		SpringApplication.run(InboxApp.class, args);
 	}
@@ -47,6 +51,10 @@ public class InboxApp {
 		folderRepository.save(new Folder("htder", "Inbox", "blue"));
 		folderRepository.save(new Folder("htder", "Sent", "green"));
 		folderRepository.save(new Folder("htder", "Important", "yellow"));
+
+		unreadEmailStatsRepository.decrementUnreadCount("htder", "Inbox");
+		unreadEmailStatsRepository.decrementUnreadCount("htder", "Inbox");
+		unreadEmailStatsRepository.decrementUnreadCount("htder", "Inbox");
 
 		for (int i = 0; i < 10; i++) {
 			EmailListItemKey key = new EmailListItemKey();
