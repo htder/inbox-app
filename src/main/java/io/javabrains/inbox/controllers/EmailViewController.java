@@ -2,6 +2,7 @@ package io.javabrains.inbox.controllers;
 
 import io.javabrains.inbox.email.Email;
 import io.javabrains.inbox.email.EmailRepository;
+import io.javabrains.inbox.email.EmailService;
 import io.javabrains.inbox.emaillist.EmailListItem;
 import io.javabrains.inbox.emaillist.EmailListItemKey;
 import io.javabrains.inbox.emaillist.EmailListItemRepository;
@@ -41,6 +42,9 @@ public class EmailViewController {
     @Autowired
     UnreadEmailStatsRepository unreadEmailStatsRepository;
 
+    @Autowired
+    EmailService emailService;
+
     @GetMapping(value = "/emails/{id}")
     public String emailView(
             @RequestParam String folder,
@@ -70,7 +74,7 @@ public class EmailViewController {
         String toIds = String.join(", ", email.getTo());
 
         // Check if user is allowed to see the email
-        if (!userId.equals(email.getFrom()) && !email.getTo().contains(userId)) {
+        if (!emailService.doesHaveAccess(email, userId)) {
             return "redirect:/";
         }
 

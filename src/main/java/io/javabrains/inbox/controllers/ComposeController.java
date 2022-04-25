@@ -28,9 +28,12 @@ public class ComposeController {
 
     @Autowired EmailService emailService;
 
+    @Autowired EmailRepository emailRepository;
+
 
     @GetMapping(value = "/compose")
     public String getComposePage(
+            @RequestParam(required = false) UUID id,
             @RequestParam(required = false) String to,
             @AuthenticationPrincipal OAuth2User principal,
             Model model
@@ -50,6 +53,14 @@ public class ComposeController {
         List<String> uniqueToIds = splitIds(to);
         model.addAttribute("toIds", String.join(", ", uniqueToIds));
 
+        Optional<Email> optionalEmail = emailRepository.findById(id);
+        if (optionalEmail.isPresent()) {
+            Email email = optionalEmail.get();
+            if (emailService.doesHaveAccess(email, userId)) {
+                model.addAttribute("subject", emailService.getReplySubject(email.getSubject()));
+                model.addAttribute("body", emailService.getReplyBody(email));
+            }
+        }
         return "compose-page";
     }
 
